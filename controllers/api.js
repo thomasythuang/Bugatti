@@ -28,8 +28,6 @@ var querystring = require('querystring');
 
 var secrets = require('../config/secrets');
 
-
-
 /**
  * GET /api
  * List of API examples.
