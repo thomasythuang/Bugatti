@@ -5,6 +5,7 @@ var nodemailer = require('nodemailer');
 var passport = require('passport');
 var User = require('../models/User');
 var secrets = require('../config/secrets');
+var request = require('request');
 
 /**
  * GET /login
@@ -293,6 +294,63 @@ exports.postDeleteAccount = function(req, res, next) {
     res.redirect('/');
   });
 };
+
+// This is so secure
+var test_id = 'cus_KIFXkojZyRkk6-';
+var test_api_key = '3dd90f45-3371-44e6-8479-349a33df6f2e';
+var customer_id = 'cus_K_2kliqDxo-EI-';
+var api_key = 'e8c71ef3-a56c-40ce-be76-71113b198919';
+var Postmates = require('postmates');
+var postmates = new Postmates(customer_id, api_key);
+var test_postmates = new Postmates(test_id, test_api_key);
+/**
+ * POST /order/:email/:nickname
+ * Creates a Postmates order of the provided food
+ */
+exports.createOrder = function(req, res, next) {
+  var address_info = {
+    pickup_address: '711 Church St, Evanston, IL 60201',
+    dropoff_address: '1999 Campus Dr, Evanston, IL 60208'
+  };
+
+  test_postmates.quote(address_info, function(err, result){
+    if (err) return next(err);
+
+    User.findOne({'email': req.params.email}, 'favorites', function(err, user){
+      if (err) return next(err);
+
+      desc = makeOrderString(user, req.params.nickname)
+      var delivery = {
+        manifest: "Instant Chipotle!!!!",
+        pickup_name: "Chipotle Mexican Grill",
+        pickup_address: address_info.pickup_address,
+        pickup_phone_number: "847-425-3959",
+        pickup_business_name: "Chipotle Mexican Grill",
+        pickup_notes: desc,
+        dropoff_name: "Michael Wang",
+        dropoff_phone_number: "123-456-7890",
+        dropoff_address: address_info.pickup_address,
+        dropoff_notes: "This is a test order, please ignore",
+        quote_id: result.text.id
+      };
+      postmates.new(delivery, function(err, result2){
+        if (err) return next(err);
+        res.send(result2.text);
+      });
+
+    });
+  });
+};
+
+function makeOrderString(user, nickname){
+  var result = user.favorites.filter(function(obj) {
+    return obj.nickname == nickname;
+  });
+  result = result[0]
+  order_string = result.meat + ' ' + result.order_type + ' with ' + result.rice
+  + ', ' + result.beans + ', and ' + result.toppings + '. Also ' + result.additional;
+  return order_string
+}
 
 /**
  * GET /account/unlink/:provider
