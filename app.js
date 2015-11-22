@@ -112,6 +112,7 @@ app.post('/contact', contactController.postContact);
 app.get('/account', passportConf.isAuthenticated, userController.getAccount);
 app.get('/extension/:email/favorites', userController.getFavorites);
 app.post('/order/:email/:nickname', userController.createOrder);
+app.get('/delivery/details/:deliveryid', userController.deliveryDetails);
 app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/add_location', passportConf.isAuthenticated, userController.addLocation);
 app.post('/account/add_order', passportConf.isAuthenticated, userController.addOrder);

@@ -333,14 +333,20 @@ exports.createOrder = function(req, res, next) {
         dropoff_notes: "This is a test order, please ignore",
         quote_id: result.text.id
       };
-      postmates.new(delivery, function(err, result2){
+      test_postmates.new(delivery, function(err, result2){
         if (err) return next(err);
         res.send(result2.text);
       });
-
     });
   });
 };
+
+exports.deliveryDetails = function(req, res, next){
+  test_postmates.get(req.params.deliveryid, function(err, result){
+    if (err) return next(err);
+    res.send(result.text);
+  })
+}
 
 function makeOrderString(user, nickname){
   var result = user.favorites.filter(function(obj) {
