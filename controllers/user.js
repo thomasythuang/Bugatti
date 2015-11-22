@@ -134,6 +134,31 @@ exports.postUpdateProfile = function(req, res, next) {
 };
 
 /**
+ * POST /account/order
+ * Update order information.
+ */
+exports.postUpdateOrder = function(req, res, next) {
+  User.findById(req.user.id, function(err, user) {
+    if (err) return next(err);
+    
+    user.order.pickup = req.body.pickup || '';
+    user.order.delivery = req.body.delivery || '';
+    user.order.order_type = req.body.order_type || '';
+    user.order.rice = req.body.rice || '';
+    user.order.meat = req.body.meat || '';
+    user.order.beans = req.body.beans || '';
+    user.order.toppings = req.body.toppings || '';
+    user.order.additional = req.body.additional || '';
+
+    user.save(function(err) {
+      if (err) return next(err);
+      req.flash('success', { msg: 'Order information updated.' });
+      res.redirect('/account');
+    });
+  });
+};
+
+/**
  * POST /account/password
  * Update current password.
  */

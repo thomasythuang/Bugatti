@@ -2,6 +2,48 @@ extends ../layout
 
 block content
   .page-header
+    h3 My Order
+
+  form.form-horizontal(action='/account/order', method='post')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='pickup') Chipotle Address:
+      .col-sm-7  
+        input.form-control(type='pickup',name='pickup',id='pickup',value='#{user.order.pickup}')
+    .form-group
+      label.col-sm-3.control-label(for='delivery') Delivery Address:
+      .col-sm-7  
+        input.form-control(type='delivery',name='delivery',id='delivery',value='#{user.order.delivery}')
+    .form-group
+      label.col-sm-3.control-label(for='order_type') Order Type: (i.e. burrito, bowl, salad)
+      .col-sm-7 
+        input.form-control(type='order_type',name='order_type',id='order_type',value='#{user.order.order_type}')
+    .form-group
+      label.col-sm-3.control-label(for='rice') Rice: (white, brown, or none)
+      .col-sm-7 
+        input.form-control(type='rice',name='rice',id='rice',value='#{user.order.rice}')
+    .form-group
+      label.col-sm-3.control-label(for='beans') Beans: (black, pinto, or none)
+      .col-sm-7 
+        input.form-control(type='beans',name='beans',id='beans',value='#{user.order.beans}')
+    .form-group
+      label.col-sm-3.control-label(for='meat') Meat:
+      .col-sm-7 
+        input.form-control(type='meat',name='meat',id='meat',value='#{user.order.meat}')
+    .form-group
+      label.col-sm-3.control-label(for='toppings') Toppings: (i.e. lettuce, mild salsa)
+      .col-sm-7 
+        input.form-control(type='toppings',name='toppings',id='toppings',value='#{user.order.toppings}')
+    .form-group
+      label.col-sm-3.control-label(for='additional') Additional Instructions:
+      .col-sm-7 
+        input.form-control(type='additional',name='additional',id='additional',value='#{user.order.additional}')
+    .form-group
+      .col-sm-offset-3.col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          | Update Order
+
+  .page-header
     h3 Profile Information
 
   form.form-horizontal(action='/account/profile', method='POST')
@@ -77,11 +119,6 @@ block content
   .form-horizontal
     .form-group
       .col-sm-offset-3.col-sm-4
-        if user.instagram
-          p: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
-        else
-          p: a(href='/auth/instagram') Link your Instagram account
-      .col-sm-offset-3.col-sm-4
         if user.google
           p: a.text-danger(href='/account/unlink/google') Unlink your Google account
         else
@@ -96,13 +133,3 @@ block content
           p: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
         else
           p: a(href='/auth/twitter') Link your Twitter account
-      .col-sm-offset-3.col-sm-4
-        if user.github
-          p: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
-        else
-          p: a(href='/auth/github') Link your GitHub account
-      .col-sm-offset-3.col-sm-4
-        if user.linkedin
-          p: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
-        else
-          p: a(href='/auth/linkedin') Link your LinkedIn account

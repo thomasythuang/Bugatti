@@ -19,6 +19,17 @@ var userSchema = new mongoose.Schema({
     picture: { type: String, default: '' }
   },
 
+  order: {
+    pickup: { type: String, default: '' },
+    delivery: { type: String, default: '' },
+    order_type: { type: String, default: '' },
+    rice: { type: String, default: '' },
+    beans: { type: String, default: '' },
+    meat: { type: String, default: '' },
+    toppings: { type: String, default: '' },
+    additional: { type: String, default: '' }
+  },
+
   resetPasswordToken: String,
   resetPasswordExpires: Date
 });

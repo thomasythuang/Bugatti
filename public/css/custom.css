@@ -1,5 +1,9 @@
 
 
-.big-block{
-	margin: 10px;
+.centered{
+	text-align: center;
+}
+
+#signupbutton{
+	margin-left: 5px;
 }

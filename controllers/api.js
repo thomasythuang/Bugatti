@@ -25,8 +25,13 @@ var _ = require('lodash');
 var async = require('async');
 var querystring = require('querystring');
 
-
 var secrets = require('../config/secrets');
+
+var test_id = 'cus_KIFXkojZyRkk6-';
+var test_api_key = '3dd90f45-3371-44e6-8479-349a33df6f2e';
+var base = 'https://api.postmates.com';
+var Postmates = require('postmates');
+var postmates = new Postmates(test_id, test_api_key);
 
 /**
  * GET /api
@@ -37,6 +42,26 @@ exports.getApi = function(req, res) {
     title: 'API Examples'
   });
 };
+
+exports.getPostmates = function(req, res, next){
+  var delivery = {
+    pickup_address: '711 Church St, Evanston, IL 60201',
+    dropoff_address: '1999 Campus Dr, Evanston, IL 60208'
+  };
+
+  postmates.quote(delivery, function(err, result){
+    res.render('home', {
+      body: result
+    });
+  });
+
+}
+
+exports.setOrder = function(req, res, next){
+  console.log("set orders");
+  res.render('home', {
+  });
+}
 
 /**
  * GET /api/foursquare
