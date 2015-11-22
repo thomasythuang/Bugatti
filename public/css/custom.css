@@ -3,7 +3,17 @@
 .centered{
 	text-align: center;
 }
-
-#signupbutton{
+.second-button{
 	margin-left: 5px;
+}
+.clear-children:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+ }
+.fav-name{
+	font-weight: bold;
+	margin-top: 0px;
 }

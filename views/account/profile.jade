@@ -1,47 +1,123 @@
 extends ../layout
 
 block content
-  .page-header
-    h3 My Order
 
-  form.form-horizontal(action='/account/order', method='post')
+  .page-header
+    h3 My Locations
+  if (user.locations.length)
+    .clear-children
+      form.form-horizontal#location-form(action='/account/select_location', method='post')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .col-sm-4.col-sm-offset-3
+          each loc in user.locations
+            label.radio
+              input(type='radio', checked=user.selected==loc, name='location', value='#{loc}', data-toggle='radio')
+              span #{loc}
+        .form-group
+          .col-sm-offset-3.col-sm-6
+            br
+            button.btn.btn.btn-primary(type='submit')
+              i.fa.fa-level-up
+              | Update Selected Location
+            button.btn.btn.btn-danger.second-button#delete-location-button(type='button')
+              i.fa.fa-trash
+              | Delete Selected Location
+  else
+    p You currently have no locations! Add one below.
+
+  .page-header
+    h3 My Favorites
+  if (user.favorites.length)
+    .clear-children
+      form.form-horizontal#location-form(action='/account/delete_order', method='post')
+        input(type='hidden', name='_csrf', value=_csrf)
+        each fav in user.favorites
+          .col-sm-4
+            label.radio.fav-radio
+              input(type='radio', name='nickname', value='#{fav.nickname}', data-toggle='radio')
+              h4.fav-name #{fav.nickname}
+            p #{fav.meat}
+            p #{fav.order_type}
+            p #{fav.rice}
+            p #{fav.beans}
+        .form-group
+          .col-sm-offset-3.col-sm-6
+            br
+            button.btn.btn.btn-danger#delete-order-button(type='submit')
+              i.fa.fa-trash
+              | Delete Selected Order
+  else
+    p You currently have no favorites! Add one below.
+
+
+
+  .page-header
+    h3 Add a Chipotle Location
+  form.form-horizontal(action='/account/add_location', method='post')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group
-      label.col-sm-3.control-label(for='pickup') Chipotle Address:
-      .col-sm-7  
-        input.form-control(type='pickup',name='pickup',id='pickup',value='#{user.order.pickup}')
-    .form-group
-      label.col-sm-3.control-label(for='delivery') Delivery Address:
-      .col-sm-7  
-        input.form-control(type='delivery',name='delivery',id='delivery',value='#{user.order.delivery}')
-    .form-group
-      label.col-sm-3.control-label(for='order_type') Order Type: (i.e. burrito, bowl, salad)
-      .col-sm-7 
-        input.form-control(type='order_type',name='order_type',id='order_type',value='#{user.order.order_type}')
-    .form-group
-      label.col-sm-3.control-label(for='rice') Rice: (white, brown, or none)
-      .col-sm-7 
-        input.form-control(type='rice',name='rice',id='rice',value='#{user.order.rice}')
-    .form-group
-      label.col-sm-3.control-label(for='beans') Beans: (black, pinto, or none)
-      .col-sm-7 
-        input.form-control(type='beans',name='beans',id='beans',value='#{user.order.beans}')
-    .form-group
-      label.col-sm-3.control-label(for='meat') Meat:
-      .col-sm-7 
-        input.form-control(type='meat',name='meat',id='meat',value='#{user.order.meat}')
-    .form-group
-      label.col-sm-3.control-label(for='toppings') Toppings: (i.e. lettuce, mild salsa)
-      .col-sm-7 
-        input.form-control(type='toppings',name='toppings',id='toppings',value='#{user.order.toppings}')
-    .form-group
-      label.col-sm-3.control-label(for='additional') Additional Instructions:
-      .col-sm-7 
-        input.form-control(type='additional',name='additional',id='additional',value='#{user.order.additional}')
+      label.col-sm-3.control-label(for='location') Address:
+      .col-sm-7
+        input.form-control(type='location',name='location',id='location')
     .form-group
       .col-sm-offset-3.col-sm-4
         button.btn.btn.btn-primary(type='submit')
-          | Update Order
+          i.fa.fa-plus-square
+          | Add to Locations
+
+  .page-header
+    h3 Add a Favorite
+  form.form-horizontal(action='/account/add_order', method='post')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='order_type') Order Type: (i.e. burrito, bowl, salad)
+      .col-sm-7
+        input.form-control(type='order_type',name='order_type',id='order_type')
+    .form-group
+      label.col-sm-3.control-label(for='rice') Rice:
+      .col-sm-4
+        label.radio.col-sm-4
+          input(type='radio', name='rice', value='white rice', data-toggle='radio')
+          span White rice
+        label.radio.col-sm-4
+          input(type='radio', name='rice', value='brown rice', data-toggle='radio')
+          span Brown rice
+        label.radio.col-sm-4
+          input(type='radio', name='rice', value='no rice', data-toggle='radio')
+          span No rice
+    .form-group
+      label.col-sm-3.control-label(for='beans') Beans:
+      .col-sm-4
+        label.radio.col-sm-4
+          input(type='radio', name='beans', value='black beans', data-toggle='radio')
+          span Black beans
+        label.radio.col-sm-4
+          input(type='radio', name='beans', value='pinto beans', data-toggle='radio')
+          span Pinto beans
+        label.radio.col-sm-4
+          input(type='radio', name='beans', value='no beans', data-toggle='radio')
+          span No beans
+    .form-group
+      label.col-sm-3.control-label(for='meat') Meat:
+      .col-sm-7
+        input.form-control(type='meat',name='meat',id='meat')
+    .form-group
+      label.col-sm-3.control-label(for='toppings') Toppings: (i.e. lettuce, mild salsa)
+      .col-sm-7
+        input.form-control(type='toppings',name='toppings',id='toppings')
+    .form-group
+      label.col-sm-3.control-label(for='additional') Additional Instructions:
+      .col-sm-7
+        input.form-control(type='additional',name='additional',id='additional')
+    .form-group
+      label.col-sm-3.control-label(for='nickname') Nickname:
+      .col-sm-7
+        input.form-control(type='nickname',name='nickname',id='nickname')
+    .form-group
+      .col-sm-offset-3.col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-plus-square
+          | Add to Favorites
 
   .page-header
     h3 Profile Information
@@ -80,7 +156,7 @@ block content
     .form-group
       .col-sm-offset-3.col-sm-4
         button.btn.btn.btn-primary(type='submit')
-          i.fa.fa-pencilr
+          i.fa.fa-level-up
           | Update Profile
 
   .page-header

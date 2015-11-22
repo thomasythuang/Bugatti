@@ -108,7 +108,7 @@ exports.postSignup = function(req, res, next) {
  */
 exports.getAccount = function(req, res) {
   res.render('account/profile', {
-    title: 'Account Management'
+    title: 'My Profile'
   });
 };
 
@@ -134,28 +134,112 @@ exports.postUpdateProfile = function(req, res, next) {
 };
 
 /**
- * POST /account/order
- * Update order information.
+ * POST /account/select_location
+ * Update profile information.
  */
-exports.postUpdateOrder = function(req, res, next) {
+exports.selectLocation = function(req, res, next) {
   User.findById(req.user.id, function(err, user) {
     if (err) return next(err);
-    
-    user.order.pickup = req.body.pickup || '';
-    user.order.delivery = req.body.delivery || '';
-    user.order.order_type = req.body.order_type || '';
-    user.order.rice = req.body.rice || '';
-    user.order.meat = req.body.meat || '';
-    user.order.beans = req.body.beans || '';
-    user.order.toppings = req.body.toppings || '';
-    user.order.additional = req.body.additional || '';
+    user.selected = req.body.location || '';
 
     user.save(function(err) {
       if (err) return next(err);
-      req.flash('success', { msg: 'Order information updated.' });
+      req.flash('success', { msg: 'Successfully selected location.' });
       res.redirect('/account');
     });
   });
+};
+
+/**
+ * POST /account/add_location
+ * Update order information.
+ */
+exports.addLocation = function(req, res, next) {
+  location = req.body.location || 'Location Error! You should probably delete this';
+
+  User.findByIdAndUpdate(
+    req.user.id,
+    {$push: {"locations": location},
+     $set: {"selected": location}},
+    {safe: true, upsert: true, new: true},
+    function(err, model){
+      if (err) return res.send("Adding location error: " + err);
+
+
+      req.flash('success', {msg: 'New location added.'});
+      res.redirect('/account');
+    }
+  );
+};
+
+/**
+ * POST /account/add_order
+ * Update order information.
+ */
+exports.addOrder = function(req, res, next) {
+  order = {};
+  order.order_type = req.body.order_type || '';
+  order.rice = req.body.rice || '';
+  order.meat = req.body.meat || '';
+  order.beans = req.body.beans || '';
+  order.toppings = req.body.toppings || '';
+  order.additional = req.body.additional || '';
+  order.nickname = req.body.nickname || '';
+
+  User.findByIdAndUpdate(
+    req.user.id,
+    {$push: {"favorites": order}},
+    {safe: true, upsert: true, new: true},
+    function(err, model){
+      if (err) return res.send("Adding favorite error: " + err);
+      req.flash('success', {msg: 'New favorite added.'});
+      res.redirect('/account');
+    }
+  );
+};
+
+/**
+ * POST /account/delete_location
+ * Delete a location from the location array
+ */
+exports.deleteLocation = function(req, res, next) {
+  if (req.body.location){
+    User.findByIdAndUpdate(
+      req.user.id,
+      {$pull: {"locations": req.body.location}},
+      {safe: true, upsert: true, new: true},
+      function(err, model){
+        if (err) return res.send("Deleting location error: " + err);
+        req.flash('info', {msg: 'Location deleted.'});
+        res.redirect('/account');
+      }
+    );
+  }else{
+    req.flash('errors', {msg: 'You did not choose a location to delete.'});
+    res.redirect('/account');
+  }
+};
+
+/**
+ * POST /account/delete_order
+ * Delete a location from the location array
+ */
+exports.deleteOrder = function(req, res, next) {
+  if (req.body.nickname){
+    User.findByIdAndUpdate(
+      req.user.id,
+      {$pull: {"favorites": {nickname: req.body.nickname}}},
+      {safe: true, upsert: true, new: true},
+      function(err, model){
+        if (err) return res.send("Deleting favorites error: " + err);
+        req.flash('info', {msg: 'Favorite deleted.'});
+        res.redirect('/account');
+      }
+    );
+  }else{
+    req.flash('errors', {msg: 'You did not choose a favorite to delete.'});
+    res.redirect('/account');
+  }
 };
 
 /**
