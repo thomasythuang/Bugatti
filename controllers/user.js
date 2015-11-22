@@ -103,6 +103,17 @@ exports.postSignup = function(req, res, next) {
 };
 
 /**
+ * GET /account/:email/favorites
+ * Returns favorites for a specific account (queried by email)
+ */
+exports.getFavorites = function(req, res) {
+  User.findOne({'email': req.params.email}, 'favorites', function(err, user){
+    if (err) return next(err);
+    res.send(user.favorites);
+  });
+};
+
+/**
  * GET /account
  * Profile page.
  */
